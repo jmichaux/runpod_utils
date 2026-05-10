@@ -71,8 +71,8 @@ if [ "$WORKSPACE" = "$HOME" ]; then
 else
   PERSIST="yes ($WORKSPACE)"
 fi
-echo "[setup_pod] persistence: $PERSIST"
-echo "[setup_pod] install-claude=$INSTALL_CLAUDE  install-codex=$INSTALL_CODEX"
+echo "[pod_setup] persistence: $PERSIST"
+echo "[pod_setup] install-claude=$INSTALL_CLAUDE  install-codex=$INSTALL_CODEX"
 
 # -----------------------------------------------------------------------------
 ensure_line() {
