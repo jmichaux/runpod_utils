@@ -1,14 +1,14 @@
 #!/bin/bash
-# local_pf.sh — forward a local port to the runpod instance.
+# local_forward.sh — forward a local port to the runpod instance.
 # Requires local_setup.sh to have been run first.
 #
 # Usage:
-#   bash local_pf.sh [local_port] [remote_port]
+#   bash local_forward.sh [local_port] [remote_port]
 #
 # Examples:
-#   bash local_pf.sh              -> forwards localhost:8080 to pod:8080
-#   bash local_pf.sh 8888         -> forwards localhost:8888 to pod:8888
-#   bash local_pf.sh 8080 8888    -> forwards localhost:8080 to pod:8888
+#   bash local_forward.sh              -> forwards localhost:8080 to pod:8080
+#   bash local_forward.sh 8888         -> forwards localhost:8888 to pod:8888
+#   bash local_forward.sh 8080 8888    -> forwards localhost:8080 to pod:8888
 
 set -eo pipefail
 

@@ -5,7 +5,7 @@ Scripts for spinning up and connecting to RunPod instances.
 ```
 runpod_utils/
   local_setup.sh   # run on your Mac each time you get a new pod
-  local_pf.sh      # run on your Mac to forward a port to the pod
+  local_forward.sh      # run on your Mac to forward a port to the pod
   pod_setup.sh     # run on the pod itself
   README.md
 ```
@@ -18,7 +18,7 @@ runpod_utils/
 
 ```bash
 git clone https://github.com/jmichaux/runpod_utils.git ~/runpod_utils
-chmod +x ~/runpod_utils/local_setup.sh ~/runpod_utils/local_pf.sh
+chmod +x ~/runpod_utils/local_setup.sh ~/runpod_utils/local_forward.sh
 ```
 
 ### 2. Make sure you have an SSH key on your Mac
@@ -154,13 +154,13 @@ bash setup_project.sh
 To forward a port from the pod to your Mac (e.g. for Jupyter):
 
 ```bash
-bash ~/runpod_utils/local_pf.sh 8888
+bash ~/runpod_utils/local_forward.sh 8888
 ```
 
 Or with different local and remote ports:
 
 ```bash
-bash ~/runpod_utils/local_pf.sh 8080 8888
+bash ~/runpod_utils/local_forward.sh 8080 8888
 ```
 
 Press `Ctrl+C` to stop the tunnel. The tunnel also gives you an interactive shell — just exit the shell to close it.
