@@ -83,18 +83,31 @@ Each new pod (after step 2):
 
 > If VS Code hangs on "Setting up SSH Host runpod", it's usually because `StrictHostKeyChecking no` got bypassed by a stale entry. `local_setup.sh` rewrites the host block on each run, so re-running it fixes most issues.
 
-### 4. Fetch and run `pod_setup.sh`
+### 4. Get `pod_setup.sh` onto the pod
 
-The base image may not have `git` (some RunPod templates do, the minimal ones don't), and `pod_setup.sh` installs it as part of its work. So we `curl` just the script directly rather than `git clone`-ing this repo:
+The base image may or may not have `git` — some RunPod templates do, minimal ones don't. Try these in order:
 
 ```bash
+# Option 1 — git clone (preferred; works if git is on the base image)
+git clone https://github.com/jmichaux/runpod_utils.git
+cd runpod_utils
+
+# Option 2 — curl (works without git; downloads the file so you can inspect
+# before running, rather than piping to bash)
 curl -fsSLO https://raw.githubusercontent.com/jmichaux/runpod_utils/main/pod_setup.sh
+
+# Option 3 — scp from your Mac (fallback if neither git nor curl is on the pod).
+# Run this on your Mac, not the pod:
+scp ~/runpod_utils/pod_setup.sh runpod:~/
+```
+
+Then run it on the pod:
+
+```bash
 bash pod_setup.sh
 ```
 
-> If `curl` is also missing (rare — most templates have it): `apt-get update && apt-get install -y curl`, then re-run.
-
-> Note: a `curl`'d file is not a git repo, so you can't `git push` changes back. The expected workflow is to edit `runpod_utils` on your Mac (cloned in Mac-setup step 1) and push from there. Pods always pull the latest `main` via curl on bring-up. If you want to iterate on `pod_setup.sh` from the pod itself, just `git clone https://github.com/jmichaux/runpod_utils.git` *after* this step — git is installed now.
+> Editing this repo: option 1 gives you a real git checkout, but the pod doesn't have GitHub auth wired up until `pod_setup.sh` finishes. The expected workflow is to edit `runpod_utils` on your Mac (cloned in Mac-setup step 1) and push from there; pods pull the latest `main` on each bring-up. To iterate on `pod_setup.sh` from the pod itself, finish step 5 first, then `git clone` (or change the existing clone's remote to SSH) once GitHub auth is set up.
 
 **Flags** — all optional, defaults install both Claude Code and Codex:
 
