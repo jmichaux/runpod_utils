@@ -14,31 +14,38 @@ runpod_utils/
 
 ## Mac setup (one time only)
 
-Clone this repo somewhere permanent on your Mac:
+### 1. Clone this repo somewhere permanent
 
 ```bash
 git clone https://github.com/jmichaux/runpod_utils.git ~/runpod_utils
-```
-
-Make the scripts executable:
-
-```bash
 chmod +x ~/runpod_utils/local_setup.sh ~/runpod_utils/local_pf.sh
 ```
 
-You need an SSH key at `~/.ssh/id_ed25519` — `local_setup.sh` wires this as the identity file for `ssh runpod`. If you don't have one:
+### 2. Make sure you have an SSH key on your Mac
+
+`local_setup.sh` wires `~/.ssh/id_ed25519` as the identity file for `ssh runpod`. If you don't already have one:
 
 ```bash
 ssh-keygen -t ed25519 -C "you@email.com"
 ```
 
-Add the **public** key to your RunPod account's SSH keys (RunPod dashboard → Settings → SSH Public Keys) so it gets injected into each new pod's `authorized_keys`:
+### 3. Register the public key with RunPod
 
-```bash
-cat ~/.ssh/id_ed25519.pub
-```
+This is what lets you `ssh runpod` at all. RunPod copies any account-level SSH public keys into every new pod's `~/.ssh/authorized_keys` at boot, so once this is done you don't have to redo it per-pod.
 
-> Optional: if you also want to push/pull from GitHub on your Mac, add the same key at https://github.com/settings/ssh/new. The workflow below does all git operations from the pod, so this isn't required.
+1. Go to the RunPod console → **Settings** → **SSH Public Keys** ([direct link](https://www.runpod.io/console/user/settings)).
+2. Click **Add Public Key** and paste the contents of:
+
+   ```bash
+   cat ~/.ssh/id_ed25519.pub
+   ```
+3. Save.
+
+> Also make sure the pod template you're using has SSH exposed — most official RunPod templates do, and the dashboard will show an IP/port under **Connect** if so. If you only see "Web Terminal," pick a template with SSH enabled.
+
+### 4. (Optional) Register the same key with GitHub on your Mac
+
+Only needed if you want to git-push from your Mac. The workflow below does all git operations from the pod, so this is optional. If you want it: paste `cat ~/.ssh/id_ed25519.pub` at https://github.com/settings/ssh/new.
 
 ---
 
