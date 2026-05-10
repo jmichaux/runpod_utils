@@ -79,30 +79,29 @@ Each new pod (after step 2):
 
 1. `Cmd+Shift+P` → **Remote-SSH: Connect to Host…** → pick `runpod`.
 2. Once connected, **File → Open Folder…** → `/workspace` (the persistent volume).
-3. Open the integrated terminal (``Ctrl+` ``) — it's a shell on the pod, so steps 4–7 below can be run from there instead of a separate `ssh runpod` session.
+3. Open the integrated terminal (``Ctrl+` ``) — it's a shell on the pod, so steps 4–6 below can be run from there instead of a separate `ssh runpod` session.
 
 > If VS Code hangs on "Setting up SSH Host runpod", it's usually because `StrictHostKeyChecking no` got bypassed by a stale entry. `local_setup.sh` rewrites the host block on each run, so re-running it fixes most issues.
 
-### 4. Get this repo onto the pod
+### 4. Fetch and run `pod_setup.sh`
 
-The pod doesn't have a GitHub-registered SSH key yet (that happens in step 5), so use HTTPS:
-
-```bash
-git clone https://github.com/jmichaux/runpod_utils.git
-```
-
-### 5. Run the pod setup script
+The base image may not have `git` (some RunPod templates do, the minimal ones don't), and `pod_setup.sh` installs it as part of its work. So we `curl` just the script directly rather than `git clone`-ing this repo:
 
 ```bash
-bash runpod_utils/pod_setup.sh
+curl -fsSLO https://raw.githubusercontent.com/jmichaux/runpod_utils/main/pod_setup.sh
+bash pod_setup.sh
 ```
+
+> If `curl` is also missing (rare — most templates have it): `apt-get update && apt-get install -y curl`, then re-run.
+
+> Note: a `curl`'d file is not a git repo, so you can't `git push` changes back. The expected workflow is to edit `runpod_utils` on your Mac (cloned in Mac-setup step 1) and push from there. Pods always pull the latest `main` via curl on bring-up. If you want to iterate on `pod_setup.sh` from the pod itself, just `git clone https://github.com/jmichaux/runpod_utils.git` *after* this step — git is installed now.
 
 **Flags** — all optional, defaults install both Claude Code and Codex:
 
 ```bash
-bash runpod_utils/pod_setup.sh --install-codex=0    # Claude only
-bash runpod_utils/pod_setup.sh --install-claude=0   # Codex only
-bash runpod_utils/pod_setup.sh --install-claude=0 --install-codex=0  # neither
+bash pod_setup.sh --install-codex=0    # Claude only
+bash pod_setup.sh --install-claude=0   # Codex only
+bash pod_setup.sh --install-claude=0 --install-codex=0  # neither
 ```
 
 You can pass identity and key info to wire everything up in one shot:
@@ -112,10 +111,10 @@ GH_USER=yourname \
 GIT_NAME='Your Name' \
 GIT_EMAIL='you@email.com' \
 OPENAI_API_KEY='sk-...' \
-bash runpod_utils/pod_setup.sh --install-codex=0
+bash pod_setup.sh --install-codex=0
 ```
 
-### 6. Follow the printed checklist
+### 5. Follow the printed checklist
 
 At the end the script prints a "Do next" list. At minimum:
 
@@ -124,12 +123,14 @@ At the end the script prints a "Do next" list. At minimum:
 - Run `gh auth login`
 - Run `source ~/.bashrc`
 
-### 7. Run your project setup script
+### 6. Clone and set up your project
 
-Go to your project repo and run its own setup script:
+`pod_setup.sh` installed git, so now you can clone your actual project repo and run its setup script:
 
 ```bash
-cd ~/my-project
+cd /workspace
+git clone <your-project-repo>
+cd <your-project>
 bash setup_project.sh
 ```
 
